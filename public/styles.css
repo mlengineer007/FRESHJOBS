@@ -1,0 +1,17 @@
+body {
+    font-family: Arial;
+    margin: 20px;
+    background: #f9f9f9;
+  }
+  .job-card {
+    background: white;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  a {
+    text-decoration: none;
+    color: blue;
+  }
+  
