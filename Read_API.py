@@ -9,7 +9,7 @@ rapidapikey = os.getenv('rapidapikey')
 conn = http.client.HTTPSConnection("linkedin-data-scraper-api1.p.rapidapi.com")
 
 headers = {
-    'x-rapidapi-key':  rapidapikey ,
+    'x-rapidapi-key':  'acdfb5f277msh84114c407295bf7p170cf8jsn5dff8b03ec3d' ,
     'x-rapidapi-host': "linkedin-data-scraper-api1.p.rapidapi.com"
 }
 
