@@ -1,0 +1,5 @@
+BOTO3
+Langchain
+Pydantic
+python-dotenv
+pandas

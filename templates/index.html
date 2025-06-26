@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> welcome to FRESHJOBS</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; }
+        .job-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .job-title { font-size: 20px; font-weight: bold; }
+        .job-meta { font-size: 14px; color: gray; margin-bottom: 10px; }
+        .apply-link { display: inline-block; margin-top: 10px; color: white; background: #007BFF; padding: 10px 15px; border-radius: 5px; text-decoration: none; }
+        .pagination { text-align: center; margin-top: 30px; }
+        .pagination a { margin: 0 5px; text-decoration: none; color: #007BFF; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>welcome to FRESHJOBS</h1>
+        {% for job in jobs %}
+        <div class="job-card">
+            <div class="job-title">{{ job.job_title }}</div>
+            <div class="job-meta">Posted {{ job.posted_ago }} ({{ job.posted_at.strftime('%Y-%m-%d') }})</div>
+            <div class="job-description">{{ job.job_description }}</div>
+            <a class="apply-link" href="{{job.apply_url}}" target="_blank">Apply Now</a>
+        </div>
+        {% endfor %}
+
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="/?page={{ page - 1 }}">Previous</a>
+            {% endif %}
+            <span>Page {{ page }}</span>
+            {% if has_next %}
+            <a href="/?page={{ page + 1 }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
