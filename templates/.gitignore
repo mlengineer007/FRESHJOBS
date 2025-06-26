@@ -1,0 +1,11 @@
+# Ignore environment files with secrets
+.env
+config.ini
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore virtual environments
+venv/
+.env/
