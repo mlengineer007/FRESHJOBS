@@ -16,8 +16,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    s3 = boto3.client('s3',regiion_name=aws_region,
-                      endpoint_url=aws_endpoint, aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+    s3 = boto3.client('s3',region_name=aws_region,
+                       aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
     bucket = 'freshjoblanding'
     key = 'enriched_linkedin_jobs.csv'
 
