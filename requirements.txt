@@ -5,4 +5,4 @@ python-dotenv
 pandas
 flask
 datetime
-awscli9 
+awscli
