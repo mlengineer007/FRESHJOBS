@@ -4,12 +4,20 @@ import csv
 import io
 from datetime import datetime
 import os 
+from dotenv import load_dotenv
+load_dotenv()
+
+aws_region = os.getenv('AWS_REGION')
+aws_endpoint = os.getenv('aws_endpoint')
+aws_access_key_id = os.getenv('aws_access_key')
+aws_secret_access_key = os.getenv('aws_secret_access_key')
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    s3 = boto3.client('s3')
+    s3 = boto3.client('s3',regiion_name=aws_region,
+                      endpoint_url=aws_endpoint, aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
     bucket = 'freshjoblanding'
     key = 'enriched_linkedin_jobs.csv'
 
