@@ -22,6 +22,9 @@ today= datetime.now()
 df["posted_ago"] = (today - pd.to_datetime(df['posted_at'])).dt.days
 df = df.sort_values(by='posted_ago')
 
+df['apply_url'] = df['apply_url'].str.replace(
+    'job-apply', 'jobs/view', regex=False
+)
 
 df.to_csv("enriched_linked_job.csv",header=1)
 
