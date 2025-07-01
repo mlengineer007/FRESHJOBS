@@ -249,12 +249,17 @@
         <!-- Resume Upload Section -->
         <div class="resume-section">
             <h3>Upload Your Resume for Personalized Job Matching</h3>
-            
+    
             {% if not resume_uploaded %}
             <div class="upload-area" id="uploadArea">
                 <p><strong>Drag & drop your resume here or click to browse</strong></p>
                 <p>Supported formats: PDF, DOCX, TXT (Max 16MB)</p>
-                <input type="file" id="resumeFile" class="file-input-styled" accept=".pdf,.docx,.txt">
+                
+                <button type="button" class="upload-btn">
+                    Choose File
+                </button>
+                
+                <input type="file" id="resumeFile" class="file-input-overlay" accept=".pdf,.docx,.txt">
             </div>
             {% else %}
             <div class="status-success" style="display: block;">
