@@ -13,6 +13,5 @@ venv/
 .env*.local
 !.env.example
 
-/.venv
-/.env
-.env
+FRESHJOB/.venv
+FRESHJOB/.env
