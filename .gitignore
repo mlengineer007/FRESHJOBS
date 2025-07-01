@@ -1,19 +1,12 @@
-# Ignore environment files with secrets
+# Environment variables
 .env
-config.ini
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
 
-# Ignore Python cache
-__pycache__/
-*.pyc
-
-# Ignore virtual environments
+# Virtual environment
+.venv/
 venv/
-.env/
-.env
-.env*.local
-!.env
-.vscode
-/.vscode
-FRESHJOB/.venv
-FRESHJOB/.env
-FRESHJOB/.vscode
+env/
