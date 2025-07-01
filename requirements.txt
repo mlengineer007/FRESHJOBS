@@ -9,4 +9,4 @@ awscli
 PyPDF2
 docx
 langchain_huggingface
-sklearn
+scikit-learn
