@@ -1,33 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title> welcome to FRESHJOBS</title>
+    <title>Welcome to FRESHJOBS</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
-        .container { max-width: 800px; margin: auto; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
         .job-card {
             background: #fff;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
-        .job-title { font-size: 20px; font-weight: bold; }
-        .job-meta { font-size: 14px; color: gray; margin-bottom: 10px; }
-        .apply-link { display: inline-block; margin-top: 10px; color: white; background: #007BFF; padding: 10px 15px; border-radius: 5px; text-decoration: none; }
-        .pagination { text-align: center; margin-top: 30px; }
-        .pagination a { margin: 0 5px; text-decoration: none; color: #007BFF; font-weight: bold; }
+        .job-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .job-meta {
+            font-size: 14px;
+            color: #777;
+            margin: 5px 0 15px;
+        }
+        .job-description {
+            margin-bottom: 10px;
+        }
+        .skills {
+            margin-top: 10px;
+        }
+        .skill-tag {
+            display: inline-block;
+            background-color: #e7f1ff;
+            color: #004085;
+            padding: 6px 12px;
+            margin: 3px 5px 3px 0;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .apply-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: white;
+            background: #007BFF;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .apply-link:hover {
+            background: #0056b3;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>welcome to FRESHJOBS</h1>
+        <h1>Welcome to FRESHJOBS</h1>
         {% for job in jobs %}
         <div class="job-card">
             <div class="job-title">{{ job.job_title }}</div>
             <div class="job-meta">Posted {{ job.posted_ago }} ({{ job.posted_at.strftime('%Y-%m-%d') }})</div>
             <div class="job-description">{{ job.job_description }}</div>
-            <a class="apply-link" href="{{job.apply_url}}" target="_blank">Apply Now</a>
+
+            <div class="skills">
+                {% if job.skills %}
+                    {% for skill in job.skills %}
+                        <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                {% else %}
+                    <span style="color: #888;">No skills listed</span>
+                {% endif %}
+            </div>
+
+            <a class="apply-link" href="{{ job.apply_url }}" target="_blank">Apply Now</a>
         </div>
         {% endfor %}
 
