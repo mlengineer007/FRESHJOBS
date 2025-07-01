@@ -12,3 +12,7 @@ venv/
 .env
 .env*.local
 !.env.example
+
+/.venv
+/.env
+.env
