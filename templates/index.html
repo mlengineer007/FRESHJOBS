@@ -384,3 +384,34 @@
     </script>
 </body>
 </html>
+
+
+
+
+<script>
+document.getElementById('resumeFile').addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    fetch('/upload_resume', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);  // Optional - you can also update DOM here
+            location.reload();    // Reload to show resume skills
+        } else {
+            alert("Upload failed: " + data.error);
+        }
+    })
+    .catch(err => {
+        alert("Error uploading file");
+        console.error(err);
+    });
+});
+</script>
