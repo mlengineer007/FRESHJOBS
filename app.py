@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import PyPDF2
-import docx
+from docx import Document
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import re
@@ -52,7 +52,7 @@ def extract_text_from_pdf(file_path):
 def extract_text_from_docx(file_path):
     """Extract text from DOCX file"""
     try:
-        doc = docx.Document(file_path)
+        doc = Document(file_path)
         text = ""
         for paragraph in doc.paragraphs:
             text += paragraph.text + "\n"
