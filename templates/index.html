@@ -45,6 +45,44 @@
         .file-input {
             display: none;
         }
+        .file-input-styled {
+            background: #007BFF;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            /* Make it display as a block or inline-block to take up space */
+            display: inline-block;
+            /* Potentially adjust width and height to cover the clickable area */
+            width: auto; /* Or 100% if you want it to fill the container */
+            height: auto;
+            /* Remove default browser styling if needed */
+            -webkit-appearance: none;
+            appearance: none;
+            /* Adjust for positioning within your upload-area if necessary */
+            position: relative;
+            overflow: hidden; /* Hide the default 'No file chosen' text */
+        }
+
+        .file-input-styled::-webkit-file-upload-button {
+            visibility: hidden; /* Hide the default button part on WebKit */
+        }
+
+        .file-input-styled::before {
+            content: 'Choose File'; /* Custom button text */
+            display: inline-block;
+            background: #007BFF;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            white-space: nowrap;
+        }
         .upload-btn {
             background: #007BFF;
             color: white;
@@ -216,10 +254,7 @@
             <div class="upload-area" id="uploadArea">
                 <p><strong>Drag & drop your resume here or click to browse</strong></p>
                 <p>Supported formats: PDF, DOCX, TXT (Max 16MB)</p>
-                <button type="button" class="upload-btn" onclick="document.getElementById('resumeFile').click()">
-                    Choose File
-                </button>
-                <input type="file" id="resumeFile" class="file-input" accept=".pdf,.docx,.txt">
+                <input type="file" id="resumeFile" class="file-input-styled" accept=".pdf,.docx,.txt">
             </div>
             {% else %}
             <div class="status-success" style="display: block;">
