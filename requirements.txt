@@ -6,3 +6,7 @@ pandas
 flask
 datetime
 awscli
+PyPDF2
+docx
+langchain_huggingface
+sklearn

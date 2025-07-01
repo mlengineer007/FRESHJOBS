@@ -9,23 +9,139 @@
             background-color: #f4f4f4;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
         }
         h1 {
             text-align: center;
             margin-bottom: 40px;
         }
+        
+        /* Resume Upload Section */
+        .resume-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        .upload-area {
+            border: 2px dashed #007BFF;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background-color: #f8f9ff;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: #0056b3;
+            background-color: #e7f1ff;
+        }
+        .upload-area.dragover {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .file-input {
+            display: none;
+        }
+        .upload-btn {
+            background: #007BFF;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        .upload-btn:hover {
+            background: #0056b3;
+        }
+        .resume-status {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .skills-display {
+            margin-top: 15px;
+        }
+        .resume-skill-tag {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        .clear-resume {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .clear-resume:hover {
+            background: #c82333;
+        }
+        
+        /* Job Cards */
         .job-card {
             background: #fff;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+        .job-card.high-match {
+            border-left: 5px solid #28a745;
+        }
+        .job-card.medium-match {
+            border-left: 5px solid #ffc107;
+        }
+        .job-card.low-match {
+            border-left: 5px solid #dc3545;
+        }
+        .similarity-score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .score-high {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .score-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .score-low {
+            background-color: #f8d7da;
+            color: #721c24;
         }
         .job-title {
             font-size: 20px;
             font-weight: bold;
+            margin-right: 100px;
         }
         .job-meta {
             font-size: 14px;
@@ -47,6 +163,11 @@
             border-radius: 20px;
             font-size: 13px;
             font-weight: 500;
+        }
+        .skill-tag.matching {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
         }
         .apply-link {
             display: inline-block;
@@ -70,21 +191,80 @@
             color: #007BFF;
             font-weight: bold;
         }
+        .matching-skills {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #28a745;
+            font-weight: bold;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #007BFF;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome to FRESHJOBS</h1>
+        
+        <!-- Resume Upload Section -->
+        <div class="resume-section">
+            <h3>Upload Your Resume for Personalized Job Matching</h3>
+            
+            {% if not resume_uploaded %}
+            <div class="upload-area" id="uploadArea">
+                <p><strong>Drag & drop your resume here or click to browse</strong></p>
+                <p>Supported formats: PDF, DOCX, TXT (Max 16MB)</p>
+                <button type="button" class="upload-btn" onclick="document.getElementById('resumeFile').click()">
+                    Choose File
+                </button>
+                <input type="file" id="resumeFile" class="file-input" accept=".pdf,.docx,.txt">
+            </div>
+            {% else %}
+            <div class="status-success" style="display: block;">
+                <strong>✓ Resume uploaded successfully!</strong>
+                Jobs are now sorted by compatibility score.
+                <button type="button" class="clear-resume" onclick="clearResume()">Clear Resume</button>
+            </div>
+            
+            {% if resume_skills %}
+            <div class="skills-display">
+                <strong>Skills found in your resume:</strong><br>
+                {% for skill in resume_skills %}
+                <span class="resume-skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endif %}
+            
+            <div class="resume-status" id="resumeStatus"></div>
+            <div class="loading" id="loading">Processing resume... Please wait.</div>
+        </div>
+        
+        <!-- Job Cards -->
         {% for job in jobs %}
-        <div class="job-card">
+        <div class="job-card {% if job.similarity_score %}{% if job.similarity_score >= 70 %}high-match{% elif job.similarity_score >= 40 %}medium-match{% else %}low-match{% endif %}{% endif %}">
+            {% if job.similarity_score is not none %}
+            <div class="similarity-score {% if job.similarity_score >= 70 %}score-high{% elif job.similarity_score >= 40 %}score-medium{% else %}score-low{% endif %}">
+                {{ job.similarity_score }}% Match
+            </div>
+            {% endif %}
+            
             <div class="job-title">{{ job.job_title }}</div>
             <div class="job-meta">Posted {{ job.posted_ago }} ({{ job.posted_at.strftime('%Y-%m-%d') }})</div>
             <div class="job-description">{{ job.job_description }}</div>
 
+            {% if job.matching_skills %}
+            <div class="matching-skills">
+                Matching Skills: {{ job.matching_skills|join(', ') }}
+            </div>
+            {% endif %}
+
             <div class="skills">
                 {% if job.skills %}
                     {% for skill in job.skills %}
-                        <span class="skill-tag">{{ skill }}</span>
+                        <span class="skill-tag {% if skill in job.matching_skills %}matching{% endif %}">{{ skill }}</span>
                     {% endfor %}
                 {% else %}
                     <span style="color: #888;">No skills listed</span>
@@ -105,5 +285,102 @@
             {% endif %}
         </div>
     </div>
+
+    <script>
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('resumeFile');
+        const resumeStatus = document.getElementById('resumeStatus');
+        const loading = document.getElementById('loading');
+
+        // Drag and drop functionality
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+        }
+
+        function handleFileUpload(file) {
+            const formData = new FormData();
+            formData.append('resume', file);
+
+            // Show loading
+            loading.style.display = 'block';
+            resumeStatus.style.display = 'none';
+
+            fetch('/upload_resume', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                
+                if (data.success) {
+                    resumeStatus.className = 'resume-status status-success';
+                    resumeStatus.innerHTML = `
+                        <strong>✓ ${data.message}</strong><br>
+                        <div style="margin-top: 10px;">
+                            <strong>Skills found:</strong><br>
+                            ${data.skills.map(skill => `<span class="resume-skill-tag">${skill}</span>`).join('')}
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <em>Refreshing page to show personalized results...</em>
+                        </div>
+                    `;
+                    resumeStatus.style.display = 'block';
+                    
+                    // Refresh page after 3 seconds
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
+                    resumeStatus.className = 'resume-status status-error';
+                    resumeStatus.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                    resumeStatus.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                resumeStatus.className = 'resume-status status-error';
+                resumeStatus.innerHTML = `<strong>Error:</strong> Failed to upload resume. Please try again.`;
+                resumeStatus.style.display = 'block';
+            });
+        }
+
+        function clearResume() {
+            fetch('/clear_resume')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
 </body>
 </html>
