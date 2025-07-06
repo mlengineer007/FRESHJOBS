@@ -5,35 +5,39 @@ import boto3
 import os
 from langchain_core.prompts import PromptTemplate
 import pandas as pd
-
+import re
 #model = HuggingFaceEndpoint(model='google/flan-t5-small',task='Summerization',max_new_tokens=1000)
-llm = HuggingFaceEndpoint(
-    repo_id="microsoft/Phi-3-mini-4k-instruct",
-    task="text-generation",
-    max_new_tokens=512,
-    do_sample=False,
-    repetition_penalty=1.03,
-)
-
-chat = ChatHuggingFace(llm=llm, verbose=True)
-parser = CommaSeparatedListOutputParser()
-
-s3_client= boto3.client('s3')
-response = s3_client.get_object(Key = 'linkedin_jobs_raw.csv', Bucket='freshjoblanding')
-df= pd.read_csv(response['Body'], header = 0 )
 
 aws_region = os.getenv('AWS_REGION')
 aws_endpoint = os.getenv('aws_endpoint')
 aws_access_key_id = os.getenv('aws_access_key')
 aws_secret_access_key = os.getenv('aws_secret_access_key')
 
-s3 = boto3.client('s3',region_name=aws_region,
+s3_client = boto3.client('s3',region_name=aws_region,
                        aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 bucket = 'freshjoblanding'
 key = 'enriched_linkedin_jobs.csv'
 
+response = s3_client.get_object(Key = 'linkedin_jobs_raw.csv', Bucket='freshjoblanding')
+df= pd.read_csv(response['Body'], header = 0 )
 
 
+
+
+
+"""""
+
+
+llm = HuggingFaceEndpoint(
+    repo_id="microsoft/Phi-3-mini-4k-instruct",
+    task="text-generation",
+    max_new_tokens=512,
+    do_sample=False,
+    repetition_penalty=1.03
+)
+
+chat = ChatHuggingFace(llm=llm, verbose=True)
+parser = CommaSeparatedListOutputParser()
 
 
 prompt_template = PromptTemplate.from_template(
@@ -50,22 +54,59 @@ prompt_template = PromptTemplate.from_template(
 #skills = parser.parse(response.content)
 
 
-
-
- 
-def extract_skills(target:str) -> list:
+skills = [] 
+def extract_skills(target : list):
     
      for i in target:
+             print(i)
              prompt = prompt_template.invoke({"topic":i})
              response = chat.invoke(prompt)
-             skills = parser.parse(response.content)
-             return skills
+             print(response.content)
+             skill = parser.parse(response.content)
+             skills.append(skill)
+
+print(extract_skills(df['description']))
+"""
 
 
+##########################################################################################################
+predefined_skills = [
+    "Python", "SQL", "AWS", "Java", "Scala", "Docker", "Kubernetes", 
+    "Azure", "Machine Learning", "Data Engineering", "Spark", "ETL", "PostgreSQL",
+    "NoSQL", "Cloud Computing", "Git", "CI/CD", "Snowflake", "Data Modeling", 
+    "Data Warehousing", "Big Data", "Hadoop", "API Integration"
+]
 
-df['skills'] = df['description'].apply(lambda x: extract_skills(x))
+def extract_skills_from_description(description: str, skills_list: list):
+    """
+    Extract skills from the description by matching with the predefined skills list.
+    Args:
+        description (str): Job description text.
+        skills_list (list): List of predefined skills.
+    Returns:
+        list: Extracted skills from the description.
+    """
+    found_skills = []
+    
+    # Normalize description and skills to avoid case sensitivity
+    description = description.lower()
+    normalized_skills = [skill.lower() for skill in skills_list]
+    
+    for skill in normalized_skills:
+        # Use regular expression to find exact matches (words that match skill)
+        if re.search(r'\b' + re.escape(skill) + r'\b', description):
+            found_skills.append(skill.capitalize())
+    
+    return found_skills
 
-print(df['skills'].head(5))
+# Process job descriptions and extract skills
+skills_list = []
+for description in df['description']:
+    extracted_skills = extract_skills_from_description(description, predefined_skills)
+    skills_list.append(", ".join(extracted_skills))  # Join skills with a comma
+
+# Add extracted skills to the dataframe
+df['extracted_skills'] = skills_list
 
 df.to_csv("skills_linked_job.csv",header=1)
 

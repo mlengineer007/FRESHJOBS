@@ -10,3 +10,4 @@ PyPDF2
 python-docx
 langchain_huggingface
 scikit-learn
+re
